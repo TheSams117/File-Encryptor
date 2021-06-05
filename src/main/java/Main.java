@@ -23,21 +23,21 @@ public class Main extends JPanel {
         return result;
     }
 
-    public File chooseFile(){
-        File file = null;
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setCurrentDirectory(new File(""));
-        int result = fileChooser.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            file = fileChooser.getSelectedFile();
-        }
-        return file;
+    public static File chooseFile(){
+//        File file = null;
+//        JFileChooser fileChooser = new JFileChooser();
+//        fileChooser.setCurrentDirectory(new File("user.home"));
+//        int result = fileChooser.showOpenDialog(this);
+//        if (result == JFileChooser.APPROVE_OPTION) {
+//            file = fileChooser.getSelectedFile();
+//        }
+        return new File("C:\\Users\\Esteb\\Desktop\\hola.txt");
     }
 
     public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
         System.out.println("Bienvenido, por favor seleccione la acción a realizar");
         System.out.println("1-Cifrar archivo");
-        System.out.println("2-Decifrar archivo");
+        System.out.println("2-Descifrar archivo");
         InputStreamReader entrada = new InputStreamReader(System.in);
         BufferedReader teclado = new BufferedReader (entrada);
         String input = teclado.readLine();
