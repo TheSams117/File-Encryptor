@@ -9,10 +9,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
+import java.util.Arrays;
 
 public class Decipher extends JPanel {
     public static final int BITS_SALTS = 256;
@@ -32,7 +35,8 @@ public class Decipher extends JPanel {
         }
     }
     public String calculateSHA1() throws NoSuchAlgorithmException, IOException {
-        byte[] key = Files.readAllBytes(fileToDecipher.toPath());
+        String directory = fileToDecipher.getParent();
+        byte[] key = Files.readAllBytes(Paths.get(directory+"\\decryptedFile"));
         MessageDigest md = MessageDigest.getInstance("SHA-1");
         byte[] hash = md.digest(key);
 
@@ -45,7 +49,21 @@ public class Decipher extends JPanel {
         System.out.println("SHA1: "+result);
         return result;
     }
-    public void decrypFile() throws Exception {
+    public boolean validateSHA1(byte [] hash) throws NoSuchAlgorithmException, IOException {
+        String hashFileEncrypted = "";
+        String result2 = "";
+        boolean isModified = false;
+        for ( byte b : hash ) {
+            result2 += b+" ";
+            hashFileEncrypted += Integer.toHexString(b&255)+" ";
+        }
+        String hashFileDencrypted = calculateSHA1();
+        if(!hashFileDencrypted.equals(hashFileEncrypted)){
+            isModified = true;
+        }
+        return isModified;
+    }
+    public void decryptFile() throws Exception {
         byte[] salt = generateSalt();
         System.out.println("Numero de bits de la semilla o salt: " + salt.length*8);
         /* generamos la clave simetrica a partir de la frase y de la salt o semilla */
@@ -53,8 +71,27 @@ public class Decipher extends JPanel {
         System.out.println("Numero de bits de la clave simetrica generada: " + key.length*8);
 
         //Path path = main.chooseFile().toPath();
-        byte[] msgcipher = decipher(key, Files.readAllBytes(fileToDecipher.toPath()));
+        byte[] fileBytes = Files.readAllBytes(fileToDecipher.toPath());
+        /* Esta parte del arreglo contiene el SHA1 del archivo encriptado */
+        byte [] hash = Arrays.copyOfRange(fileBytes, 0, 20);
+        /* Esta parte del arreglo contiene el archivo encontrado */
+        byte [] msg = Arrays.copyOfRange(fileBytes, 20, fileBytes.length);
+
+        /* Se descrifra el contenido del archivo */
+        byte[] msgcipher = decipher(key, msg);
+        /* Se crea un archivo nuevo descifrado */
         writeDecryptedFile(msgcipher);
+        /* Se valida que el SHA1 que traía el archivo cifrado sea igual al archivo descrifrado */
+        if (validateSHA1(hash)){
+            System.out.println("Tenga cuidado, el archivo ha sido modificado.");
+        }
+        else{
+            System.out.println("El archivo no ha sido modificado");
+        }
+
+
+
+
     }
     public byte[] generateSalt() {
         SecureRandom sr = new SecureRandom();
@@ -66,7 +103,6 @@ public class Decipher extends JPanel {
         KeySpec spec = new PBEKeySpec(passphrase.toCharArray(), salt, INTERACTIONS, BITS_GENERATED_KEY);
         SecretKey derivedKey = factory.generateSecret(spec);
         SecretKey secret = new SecretKeySpec(derivedKey.getEncoded(), SYMMETRIC_ALGORITHM);
-        System.out.println("key; "+secret.getEncoded());
         return secret.getEncoded();
     }
     public void writeDecryptedFile(byte[] msgcipher){

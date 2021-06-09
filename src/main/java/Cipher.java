@@ -4,10 +4,7 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
@@ -23,6 +20,7 @@ public class Cipher extends JPanel {
     public static final String SYMMETRIC_ALGORITHM = "AES";
     private File fileToCipher;
     private String passphrase;
+    private byte[] sha1;
 
     public void chooseFile(){
         System.out.println("Escogiendo archivo");
@@ -46,6 +44,7 @@ public class Cipher extends JPanel {
             result += Integer.toHexString(b&255)+" ";
         }
         System.out.println("SHA1: "+result);
+        sha1 = hash;
         return result;
     }
 
@@ -69,7 +68,6 @@ public class Cipher extends JPanel {
         KeySpec spec = new PBEKeySpec(passphrase.toCharArray(), salt, INTERACTIONS, BITS_GENERATED_KEY);
         SecretKey derivedKey = factory.generateSecret(spec);
         SecretKey secret = new SecretKeySpec(derivedKey.getEncoded(), SYMMETRIC_ALGORITHM);
-        System.out.println("key; "+secret.getEncoded());
         return secret.getEncoded();
     }
     public byte[] cipher(byte[] key, byte[] message) throws Exception {
@@ -82,12 +80,17 @@ public class Cipher extends JPanel {
     public void writeEncryptedFile(byte[] msgcipher){
         try {
             String directory = fileToCipher.getParent();
-            File file = new File(directory+"\\encryptedFile");
-            OutputStream os = new FileOutputStream(file);
+
             System.out.println("Guardando el archivo cifrado.");
+
+            File file = new File(directory+"\\encryptedFile");
+
+            OutputStream os = new FileOutputStream(file);
+            os.write(sha1);
             os.write(msgcipher);
+
             System.out.println("Archivo guardado.");
-            os.close();
+            //os.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

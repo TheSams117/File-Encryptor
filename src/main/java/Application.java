@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.NoSuchAlgorithmException;
@@ -45,9 +44,9 @@ public class Application {
                 decipher.setPassphrase(passphrase);
                 /* Escoger archivo para cifrar */
                 decipher.chooseFile();
-                decipher.calculateSHA1();
+                //decipher.calculateSHA1();
                 try {
-                    decipher.decrypFile();
+                    decipher.decryptFile();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
