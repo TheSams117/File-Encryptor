@@ -2,10 +2,10 @@
 
 ### Autores: Sergio A. Lozada Sanchez - Carlos H. Gonzales - Juan Felipe Castillo - Daniel Esteban Guzmán
 
-La aplicación desarollada tiene la capacidad de encriptar y desencriptar archivos, el programa cuenta con un menú principal de tres opciones.
+La aplicación desarollada tiene la capacidad de encriptar y desencriptar archivos. El programa cuenta con un menú principal de tres opciones.
 La primera opción permite cifrar un archivo, la segunda opción permite descifrar un archivo cifrado por la aplicación y la tercera opción permite al usuario cerrar la aplicación
 
-El sistema de cifrado usado utiliza una clave simetrica, la cual es solicitada al usuario tanto para encriptar como para desencriptar el contenido,la encriptación genera desde la clase Cipher, que utiliza el algoritmo AES, con 128 bits para generar la clave y 256 bits de semilla. El programa permite agregar el archivo a cifrar a través de un JFileChooser.
+El sistema de cifrado usado utiliza una clave simétrica, la cual es solicitada al usuario tanto para encriptar como para desencriptar el contenido. La encriptación se genera desde la clase Cipher, que utiliza el algoritmo AES, con 128 bits para generar la clave y 256 bits de semilla. El programa permite agregar el archivo a cifrar a través de un JFileChooser.
 
 ## Clase Cipher
 
@@ -28,7 +28,7 @@ Esta clase contienen todos los métodos necesarios para cifrar el archivo, el pr
         return result;
     }
 ```
-Este método lee el archivo que el usuario selecciona y lo pasa a un arreglo de bytes para ser procesado, luego se crea el Hash a partir de la clase MessageDigest de Java, que crea de manera segura un "one-way" Hash, el resultado de este método es llamado SHA1
+Este método lee el archivo que el usuario selecciona y lo pasa a un arreglo de bytes para ser procesado, luego se crea el Hash a partir de la clase MessageDigest de Java, que crea de manera segura un "one-way" Hash. El resultado de este método es llamado SHA1
 
 Luego está el método encryptFile que utiliza los métodos generateSalt, y generateSymetricKey, los cuales se explican de la siguiente manera:
 
@@ -42,7 +42,7 @@ El método generateSalt se encarga de generar la semilla para generar la clave, 
     }
 ```
 
-El método generateSymetricKey es el encargado de generar la clave de 128 bts a partidi de una cadena de caracteres con el algoritmo PBKDF2, este algoritmo necesita la semilla generada a partir del método generateSalt, el passphrase o la clave elegida por el usuario para encriptar y como resultado entrega la clave de encriptación en bytes
+El método generateSymetricKey es el encargado de generar la clave de 128 bits a partir de una cadena de caracteres con el algoritmo PBKDF2. Este algoritmo necesita la semilla generada a partir del método generateSalt, el passphrase o la clave elegida por el usuario para encriptar y como resultado entrega la clave de encriptación en bytes
 
 ```
  public byte[] generateSymmetricKey(String passphrase, byte[] salt) throws Exception {
@@ -55,7 +55,7 @@ El método generateSymetricKey es el encargado de generar la clave de 128 bts a 
 
 ```
 
-Finalmente está el método chiper, que es el encargado de cifrar la información del archivo, este utiliza la clave con la cual se cifrará y la información a cifrar, y como resultado obtenderemos el texto cifrado en bytes
+Luego, está el método chiper, que es el encargado de cifrar la información del archivo. Este utiliza la clave con la cual se cifrará y la información a cifrar, y como resultado obtenderemos el texto cifrado en bytes.
 
 ```
     public byte[] cipher(byte[] key, byte[] message) throws Exception {
@@ -67,11 +67,11 @@ Finalmente está el método chiper, que es el encargado de cifrar la informació
     }
 ```
 
-Finalmente hay un conjunto de métodos encargados de escribir esta información, que está en bytes y pasarlas a un archivo de texto plano
+Finalmente, hay un conjunto de métodos encargados de escribir esta información, que está en bytes y pasarlas a un archivo de texto plano.
 
 ## Clase Decipher
 
-Por otro lado la clase Decipher contiene los métodos chooseFile y calculateSHA1, al igual que la clase Cipher, la diferencia es que este último método  es utilizado en el siguiente método:
+La clase Decipher contiene los métodos chooseFile y calculateSHA1, al igual que la clase Cipher, la diferencia es que en este último es utilizado el siguiente método:
 
 ```
  public boolean validateSHA1(byte [] hash) throws NoSuchAlgorithmException, IOException {
@@ -90,9 +90,9 @@ Por otro lado la clase Decipher contiene los métodos chooseFile y calculateSHA1
     }
 ```
 
-ValidateSHA1. que se encargba de vañodar que el hash en el archivo y el hash del archivo decifrado sean iguales, y recibe por parametro el hash escrito en el archivo
+ValidateSHA1. El cual se encarga de validar que el Hash en el archivo y el hash del archivo descifrado sean iguales, y recibe por parámetro el Hash escrito en el archivo.
 
-Finalmente la clase Decipher tiene el método decryptFile, el cual utiliza los métodos generateSalt y generateSymmetricKey para desencriptar el archivo, basicamente este método utiliza arreglos de byte para usarlos como pasos de información, genera la clave, decifra el archivo luego valida los hash con validaSHA1
+Finalmente, la clase Decipher tiene el método decryptFile, el cual utiliza los métodos generateSalt y generateSymmetricKey para desencriptar el archivo. Básicamente, este método utiliza arreglos de byte para usarlos como pasos de información, generar la clave, descifrar el archivo y luego validar los Hash con ValidateSHA1
 
 
 ```
