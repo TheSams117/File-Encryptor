@@ -18,13 +18,37 @@ import java.security.spec.KeySpec;
 import java.util.Arrays;
 
 public class Decipher extends JPanel {
+    /**
+     * Bits de la semilla
+     */
     public static final int BITS_SALTS = 256;
+    /**
+     * Algoritmo de generación de la clave
+     */
     public static final String PBKDF2 = "PBKDF2WithHmacSHA1";
+    /**
+     * Iteraciones del algoritmo
+     */
     public static final int INTERACTIONS = 655536;
+    /**
+     * Bit para generar clave
+     */
     public static final int BITS_GENERATED_KEY = 128;
+    /**
+     * Algoritmo de desencriptación del archivo
+     */
     public static final String SYMMETRIC_ALGORITHM = "AES";
+    /**
+     * Archivo a descifrar
+     */
     private File fileToDecipher;
+    /**
+     * Contraseña ingresada por el usuario para descifrar el archivo
+     */
     private String passphrase;
+    /**
+     * Metodo encargado de escoger el archivo a descifrar
+     */
     public void chooseFile(){
         System.out.println("Escogiendo archivo");
         JFileChooser fileChooser = new JFileChooser();
@@ -34,6 +58,10 @@ public class Decipher extends JPanel {
             fileToDecipher = fileChooser.getSelectedFile();
         }
     }
+    /**
+     * Metodo encargado de calcular el hash SHA1 del archvio descifrado
+     * @return Hash SHA1 del archivo a encriptar.
+     */
     public String calculateSHA1() throws NoSuchAlgorithmException, IOException {
         String directory = fileToDecipher.getParent();
         byte[] key = Files.readAllBytes(Paths.get(directory+"\\decryptedFile"));
@@ -49,6 +77,12 @@ public class Decipher extends JPanel {
         System.out.println("SHA1: "+result);
         return result;
     }
+
+    /**
+     * Metodo encargado de validar que el hash en el archivo y el hash del archivo decifrado sean iguales
+     * @param hash Hash escrito en el archivo a decifrar
+     * @return Retorna verdadero si los hash no son iguales y falso en el caso contrario
+     */
     public boolean validateSHA1(byte [] hash) throws NoSuchAlgorithmException, IOException {
         String hashFileEncrypted = "";
         String result2 = "";
@@ -63,6 +97,9 @@ public class Decipher extends JPanel {
         }
         return isModified;
     }
+    /**
+     * Metodo encargado de llamar los metodos correspondientes para generar clave, descifrar archivo, validar hash y guardar.
+     */
     public void decryptFile() throws Exception {
         byte[] salt = generateSalt();
         System.out.println("Numero de bits de la semilla o salt: " + salt.length*8);
@@ -93,11 +130,21 @@ public class Decipher extends JPanel {
 
 
     }
+    /**
+     * Metodo encargado de generar la semilla para generar clave
+     * @return Semilla generada de 32 bytes
+     */
     public byte[] generateSalt() {
         SecureRandom sr = new SecureRandom();
         byte[] bytes = new byte[BITS_SALTS/8]; /* 256 bits = 32 bytes */
         return bytes;
     }
+    /**
+     * Metodo encargado de generar la clave de 128 bits apartir de una cadena de caracteres con el algoritmo PBKDF2
+     * @param passphrase cadena de caracteres para generar clave
+     * @param salt semilla de bytes para generar clave
+     * @return retorna la clave de desencriptación en bytes
+     */
     public byte[] generateSymmetricKey(String passphrase, byte[] salt) throws Exception {
         SecretKeyFactory factory = SecretKeyFactory.getInstance(PBKDF2);
         KeySpec spec = new PBEKeySpec(passphrase.toCharArray(), salt, INTERACTIONS, BITS_GENERATED_KEY);
@@ -105,6 +152,11 @@ public class Decipher extends JPanel {
         SecretKey secret = new SecretKeySpec(derivedKey.getEncoded(), SYMMETRIC_ALGORITHM);
         return secret.getEncoded();
     }
+    /**
+     * Este metodo se encarga de escribir en un nuevo archivo la información descifrada.
+     *
+     * @param msgcipher bytes del archivo cifrado.
+     */
     public void writeDecryptedFile(byte[] msgcipher){
         try {
             String directory = fileToDecipher.getParent();
@@ -119,6 +171,13 @@ public class Decipher extends JPanel {
             e.printStackTrace();
         }
     }
+    /**
+     * Metodo encargado de descifrar la información del archivo seleccionado.
+     *
+     * @param key es la clave con la cual se descifrara el archivo.
+     * @param message es la información del archivo cifrado en bytes
+     * @return retorna la información descifrada en bytes
+     */
     public byte[] decipher(byte[] key, byte[] message) throws Exception {
         SecretKey secret = new SecretKeySpec(key, SYMMETRIC_ALGORITHM);
         Cipher cipher = Cipher.getInstance(SYMMETRIC_ALGORITHM);
