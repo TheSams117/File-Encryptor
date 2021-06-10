@@ -1,9 +1,9 @@
-# File-Encryptor
+# File Encryptor
 
-### Autores: Sergio A. Lozada Sancher - Carlos H. Gonzales - Juan Felipe Castillo - Daniel Guzman
+### Autores: Sergio A. Lozada Sanchez - Carlos H. Gonzales - Juan Felipe Castillo - Daniel Esteban Guzmán
 
 La aplicación desarollada tiene la capacidad de encriptar y desencriptar archivos, el programa cuenta con un menú principal de tres opciones.
-La primera opción permite cifrar un archivo, la segunda opción permite Descifrar un archivo cifrado por la aplicación y la tercera opción permite al usuario cerrar la aplicación
+La primera opción permite cifrar un archivo, la segunda opción permite descifrar un archivo cifrado por la aplicación y la tercera opción permite al usuario cerrar la aplicación
 
 El sistema de cifrado usado utiliza una clave simetrica, la cual es solicitada al usuario tanto para encriptar como para desencriptar el contenido,la encriptación genera desde la clase Cipher, que utiliza el algoritmo AES, con 128 bits para generar la clave y 256 bits de semilla. El programa permite agregar el archivo a cifrar a través de un JFileChooser.
 
@@ -124,3 +124,15 @@ Finalmente la clase Decipher tiene el método decryptFile, el cual utiliza los m
 
 ```
 
+##Realización
+Para la realización del proyecto se consultó la API Criptográfica de Java y se consultaron soluciones en páginas de comunidades de programadores tales como Stackoverflow. El proceso de desarrollo consistió en dividir las funciones del programa en tareas. Estas eran:
+1. Realizar encriptación de archivos.
+2. Realizar cálculo de hash SHA1 de archivos.
+3. Realizar desencriptación de archivos.
+4. Unificación de código.
+
+##Dificultades
+Principalmente, las dificultades consintieron en comprender el uso de la API Criptográfica de Java. El mayor reto fue lograr la encriptación del archivo en conjunto con el cálculo del hash SHA1. Para lograr esto, al encriptar el archivo, se determinó una cantidad de bytes para el hash y la cantidad restante para la encriptación del archivo.
+
+##Conclusión
+En conclusión, el programa desarrollado en Java permite la encriptación y desencriptación de archivos.
